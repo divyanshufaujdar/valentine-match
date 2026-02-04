@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Payment Approvals</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="page">
+    <section class="card">
+      <div class="brand">
+        <div class="badge">₹</div>
+        <div>
+          <h1>Manual Approvals</h1>
+          <p class="sub">Approve UTR submissions before lookup.</p>
+        </div>
+      </div>
+
+      <div id="pendingList" class="result"></div>
+      <div id="adminError" class="error hidden"></div>
+    </section>
+  </main>
+
+  <script>
+    async function loadPending() {
+      const res = await fetch('/api/admin/pending');
+      const data = await res.json();
+      const container = document.getElementById('pendingList');
+      container.innerHTML = '';
+      if (!data.pending || data.pending.length === 0) {
+        container.innerHTML = '<p class="sub">No pending payments.</p>';
+        return;
+      }
+
+      data.pending.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'line';
+        row.innerHTML = `
+          <span class="label">${item.id}</span>
+          <span class="value">${item.name || 'Name: (not provided)'} | Pending: ${item.pending_count || 0} | Credits: ${item.credits || 0} | Used: ${item.used_count || 0}</span>
+          <button class="soft" data-id="${item.id}">Approve 1</button>
+        `;
+        container.appendChild(row);
+      });
+
+      container.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await fetch('/api/admin/approve', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: btn.dataset.id })
+          });
+          loadPending();
+        });
+      });
+    }
+
+    loadPending();
+  </script>
+</body>
+</html>

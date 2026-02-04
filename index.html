@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Match Lookup</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="page">
+    <section class="card">
+      <div class="brand">
+        <div class="badge">2025</div>
+        <div>
+          <h1>Find Your Match</h1>
+          <p class="sub">Enter your ID to see your matched partner.</p>
+        </div>
+      </div>
+      <div class="sweet-row" aria-hidden="true">
+        <span>🤍</span><span>💗</span><span>🍓</span><span>🧸</span><span>🍫</span><span>💌</span><span>🌹</span><span>🧁</span>
+      </div>
+
+      <div class="search">
+        <label for="idInput">Your ID</label>
+        <div class="row">
+          <input id="idInput" type="text" placeholder="e.g., 2025A7PS1234P" autocomplete="off" />
+          <button id="lookupBtn">Check Match</button>
+        </div>
+        <div class="hint">IDs are case-insensitive. Spaces are ignored. Once approved, your match pops up automatically.</div>
+      </div>
+
+      <div class="payment">
+        <div class="payment-header">Pay ₹6.70 To Unlock</div>
+        <div class="payment-steps">Step 1: Open the payment link on your phone and pay ₹6.70. Each payment unlocks one lookup.</div>
+        <div class="payment-alert">Only payments of ₹6.70 or more will be accepted. Anything less will be rejected.</div>
+        <a id="paymentLink" class="payment-link" href="upi://pay?pa=scuderiapanzer@oksbi&pn=Salmon%20Sonata&am=6.70&cu=INR" target="_blank" rel="noreferrer">Open UPI Payment Link</a>
+        <div class="payment-qr-wrap">
+          <img src="WhatsApp%20Image%202026-02-04%20at%2018.02.54.jpeg" alt="UPI payment QR" class="payment-qr" />
+          <div class="payment-qr-text">Scan to pay with any UPI app</div>
+        </div>
+        <div class="payment-steps">Step 2: After paying, enter your good name and submit for approval.</div>
+        <div class="row">
+          <input id="payerNameInput" type="text" placeholder="Your good name" autocomplete="off" />
+          <button id="submitPaymentBtn" class="soft">Submit Payment</button>
+        </div>
+        <div class="refund-note">If you send a photo with the person given here (send the SS to Rahul Agarwal), you will get all your money back and some extra rewards to make your Valentine better.</div>
+        <div class="hint">Want to check again? Just pay again and submit once more.</div>
+        <div id="paymentStatus" class="payment-status"></div>
+        <div id="waitingNote" class="waiting hidden">Waiting for admin approval — it will just take a min.</div>
+      </div>
+
+      <div id="result" class="result hidden">
+        <div class="result-header">Result</div>
+        <div class="result-body">
+          <div class="line"><span class="label">Your Name</span><span id="yourName" class="value"></span></div>
+          <div class="line"><span class="label">Your ID</span><span id="yourId" class="value"></span></div>
+          <div class="line"><span class="label">Match Name</span><span id="matchName" class="value"></span></div>
+          <div class="line"><span class="label">Match ID</span><span id="matchId" class="value"></span></div>
+          <div class="flowers" aria-hidden="true">
+            <span>🌹</span><span>🌸</span><span>💮</span><span>🌺</span><span>🌷</span><span>🌸</span><span>🌹</span><span>💐</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="valentineBox" class="valentine hidden">
+        <div class="valentine-header">Make Their Valentine Better</div>
+        <div id="valentineMessage" class="valentine-message"></div>
+        <div class="valentine-actions">
+          <button id="sweetBtn" class="soft">Give Me A Sweet Idea</button>
+          <button id="jokeBtn" class="soft">Tell A Happy Joke</button>
+        </div>
+        <div class="teddies" aria-hidden="true">
+          <span>🧸</span><span>🧸</span><span>🧸</span>
+        </div>
+      </div>
+
+      <div id="sharePrompt" class="share-prompt hidden">
+        <div class="share-title">One More Sweet Thing</div>
+        <p class="share-text">Please send a screenshot of your match to that person to make their Valentine a little brighter.</p>
+        <p class="share-text"><strong>Bonus:</strong> If you send a photo with the person given here (send the SS to Rahul Agarwal), you will get all your money back and some extra rewards to make your Valentine better.</p>
+        <div class="share-flowers" aria-hidden="true">
+          <span>🌹</span><span>🌸</span><span>🌺</span><span>🌷</span><span>💐</span><span>💮</span><span>🌸</span><span>🌹</span>
+        </div>
+      </div>
+
+      <div id="error" class="error hidden"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

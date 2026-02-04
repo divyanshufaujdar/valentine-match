@@ -1,0 +1,43 @@
+{
+  "records": {
+    "2025B2PS0970P": {
+      "id": "2025B2PS0970P",
+      "utr": "dkjhsckjdc",
+      "status": "used",
+      "submittedAt": "2026-02-03T16:31:51.429181Z",
+      "approvedAt": "2026-02-04T11:48:31.902887Z",
+      "usedAt": "2026-02-03T16:32:25.131439Z",
+      "pending_count": 0,
+      "credits": 0,
+      "used_count": 8,
+      "name": "divy",
+      "lastSubmittedAt": "2026-02-04T11:47:31.772925Z",
+      "lastUsedAt": "2026-02-04T11:48:33.750898Z"
+    },
+    "2025B1PS1393P": {
+      "id": "2025B1PS1393P",
+      "utr": "divyyy",
+      "status": "used",
+      "submittedAt": "2026-02-03T16:48:40.699233Z",
+      "approvedAt": "2026-02-04T11:09:24.925902Z",
+      "usedAt": "2026-02-03T16:48:51.888423Z",
+      "pending_count": 0,
+      "credits": 0,
+      "used_count": 2,
+      "name": "Chinmay",
+      "lastSubmittedAt": "2026-02-04T11:09:18.536168Z",
+      "lastUsedAt": "2026-02-04T11:09:27.519398Z"
+    },
+    "2025B1PS0872P": {
+      "id": "2025B1PS0872P",
+      "name": "divy",
+      "utr": "",
+      "pending_count": 0,
+      "credits": 0,
+      "used_count": 1,
+      "lastSubmittedAt": "2026-02-04T09:49:04.034458Z",
+      "approvedAt": "2026-02-04T09:49:11.683254Z",
+      "lastUsedAt": "2026-02-04T09:49:12.149305Z"
+    }
+  }
+}
