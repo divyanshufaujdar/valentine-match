@@ -209,7 +209,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (pathname === '/rose' && req.method === 'GET') {
-    const adminPath = path.join(__dirname, 'admin.html');
+    const adminPath = path.join(__dirname, 'rose.html');
     const html = fs.readFileSync(adminPath, 'utf8');
     res.writeHead(200, { 'Content-Type': 'text/html' });
     return res.end(html);

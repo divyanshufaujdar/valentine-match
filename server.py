@@ -4,7 +4,9 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_FILE = os.path.join(BASE_DIR, 'payments.json')
+# Use Azure App Service persistent storage if available
+PERSIST_DIR = '/home' if os.path.isdir('/home') else BASE_DIR
+DATA_FILE = os.environ.get('PAYMENTS_PATH', os.path.join(PERSIST_DIR, 'payments.json'))
 MATCHES_FILE = os.path.join(BASE_DIR, 'matches.json')
 PORT = int(os.environ.get('PORT', '8000'))
 
@@ -115,7 +117,7 @@ class Handler(SimpleHTTPRequestHandler):
             return self._send_json(200, {"pending": pending})
 
         if parsed.path == '/rose':
-            self.path = '/admin.html'
+            self.path = '/rose.html'
             return super().do_GET()
 
         return super().do_GET()
