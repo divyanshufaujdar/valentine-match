@@ -20,6 +20,7 @@ const sharePrompt = document.getElementById('sharePrompt');
 let pollTimer = null;
 const startScreen = document.getElementById('startScreen');
 const enterBtn = document.getElementById('enterBtn');
+const mainContent = document.getElementById('mainContent');
 
 const sweetIdeas = [
   'Give this person a treat and a tiny handwritten note.',
@@ -211,5 +212,6 @@ jokeBtn.addEventListener('click', () => {
 });
 
 enterBtn.addEventListener('click', () => {
-  startScreen.classList.add('hidden');
+  startScreen.style.display = 'none';
+  mainContent.style.display = 'block';
 });
