@@ -215,3 +215,13 @@ enterBtn.addEventListener('click', () => {
   startScreen.style.display = 'none';
   mainContent.style.display = 'block';
 });
+
+mainContent.addEventListener('mousemove', (e) => {
+  if (Math.random() > 0.12) return;
+  const sparkle = document.createElement('div');
+  sparkle.className = 'sparkle';
+  sparkle.style.left = `${e.clientX}px`;
+  sparkle.style.top = `${e.clientY}px`;
+  document.body.appendChild(sparkle);
+  setTimeout(() => sparkle.remove(), 1200);
+});
