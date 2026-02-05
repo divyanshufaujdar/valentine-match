@@ -18,6 +18,8 @@ const sweetBtn = document.getElementById('sweetBtn');
 const jokeBtn = document.getElementById('jokeBtn');
 const sharePrompt = document.getElementById('sharePrompt');
 let pollTimer = null;
+const startScreen = document.getElementById('startScreen');
+const enterBtn = document.getElementById('enterBtn');
 
 const sweetIdeas = [
   'Give this person a treat and a tiny handwritten note.',
@@ -206,4 +208,8 @@ sweetBtn.addEventListener('click', () => {
 
 jokeBtn.addEventListener('click', () => {
   valentineMessage.textContent = pick(happyJokes);
+});
+
+enterBtn.addEventListener('click', () => {
+  startScreen.classList.add('hidden');
 });

@@ -308,6 +308,45 @@ button:hover { filter: brightness(0.95); }
 
 .hidden { display: none; }
 
+.start-screen {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(900px 600px at 50% 30%, rgba(255, 122, 162, 0.45) 0%, rgba(36, 6, 11, 0.9) 60%);
+  display: grid;
+  place-items: center;
+  z-index: 50;
+}
+
+.start-card {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(255, 225, 234, 0.85));
+  border: 1px solid rgba(255, 122, 162, 0.5);
+  border-radius: 20px;
+  padding: 28px 26px;
+  text-align: center;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  color: var(--ink);
+  width: min(420px, 90%);
+}
+
+.start-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.start-btn {
+  background: linear-gradient(135deg, #ff2e6d 0%, #ff7aa2 100%);
+  color: #2a0912;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(255, 46, 109, 0.4);
+}
+
+.start-btn:hover { filter: brightness(0.95); }
+
 .valentine {
   margin-top: 18px;
   padding: 16px;
