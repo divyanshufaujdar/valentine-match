@@ -609,17 +609,19 @@ button:active { transform: translateY(1px); }
 .share-flowers span:nth-child(8) { animation-delay: 2.1s; }
 
 .disclaimer {
-  margin-top: 18px;
+  margin-top: 8px;
   padding: 14px 16px;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(255, 122, 162, 0.45);
   color: var(--ink);
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.6;
 }
 
 .disclaimer-title {
-  font-weight: 800;
+  font-weight: 900;
+  font-size: 17px;
   margin-bottom: 6px;
 }
