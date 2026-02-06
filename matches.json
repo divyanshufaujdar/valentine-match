@@ -418,8 +418,8 @@
     "2025A7PS0698P": {
       "id": "2025A7PS0698P",
       "name": "AADISHI ANAGHA SINGH",
-      "match_id": "2025A7PS0604P",
-      "match_name": "ANGAD SINGH MARWAHA",
+      "match_id": "2025ABPS0803P",
+      "match_name": "DEVESH  KEDIA",
       "match_type": "A7PS_male_same_gender"
     },
     "2025A7PS0686P": {
@@ -1006,8 +1006,8 @@
     "2025B7PS1200P": {
       "id": "2025B7PS1200P",
       "name": "ARADHYA  KAUSHIK",
-      "match_id": "2025B7PS1185P",
-      "match_name": "KANISHK DILIP MANAWAT",
+      "match_id": "2025ABPS0808P",
+      "match_name": "sorry bro you are sigma KARTIK  BHADA",
       "match_type": "opposite_gender_random"
     },
     "2025B4PS1106P": {
@@ -1251,8 +1251,8 @@
     "2025ABPS0803P": {
       "id": "2025ABPS0803P",
       "name": "DEVESH  KEDIA",
-      "match_id": "2025B3PS1032P",
-      "match_name": "EKLAVYA  KAPOOR",
+      "match_id": "2025A7PS0698P",
+      "match_name": "AADISHI ANAGHA SINGH",
       "match_type": "opposite_gender_random"
     },
     "2025B3PS1032P": {
@@ -1342,8 +1342,8 @@
     "2025A1PS0425P": {
       "id": "2025A1PS0425P",
       "name": "SHREEJA  BOTHRA",
-      "match_id": "2025B2PS1211P",
-      "match_name": "AKHIL REDDY NANDIPATI",
+      "match_id": "2025B7PS1203P",
+      "match_name": "sorry bro you are sigma ANNANT  TRIPATHY",
       "match_type": "opposite_gender_random"
     },
     "2025B5PS1124P": {
@@ -1363,8 +1363,8 @@
     "2025A1PS1472P": {
       "id": "2025A1PS1472P",
       "name": "DEV KUMAR",
-      "match_id": "2025B3PS0991P",
-      "match_name": "VIDHI  LOHIA",
+      "match_id": "2025A1PS1438P",
+      "match_name": "VONISHA MANWANI",
       "match_type": "opposite_gender_random"
     },
     "2025B3PS0991P": {
@@ -1524,8 +1524,8 @@
     "2025B1PS0914P": {
       "id": "2025B1PS0914P",
       "name": "KANISHKA VIJAY KHUBCHANDANI",
-      "match_id": "2025B5PS1122P",
-      "match_name": "AARYAN  SINGHAL",
+      "match_id": "2025B1PS0872P",
+      "match_name": "sorry bro you are sigma ANSHUL  MITTAL",
       "match_type": "opposite_gender_random"
     },
     "2025ABPS1261P": {
@@ -1545,8 +1545,8 @@
     "2025B1PS0901P": {
       "id": "2025B1PS0901P",
       "name": "CHITRANSH  SINHA",
-      "match_id": "2025B3PS1051P",
-      "match_name": "BHAVYA NITIN MEHTA",
+      "match_id": "2025B1PS1268P",
+      "match_name": "CHITRANSHI SAO",
       "match_type": "opposite_gender_random"
     },
     "2025B3PS1051P": {
@@ -1790,8 +1790,8 @@
     "2025A1PS0423P": {
       "id": "2025A1PS0423P",
       "name": "SHORYA  KUDESIA",
-      "match_id": "2025A8PS0752P",
-      "match_name": "KRISHAN  SABHARWAL",
+      "match_id": "2025A5PS1506P",
+      "match_name": "ISHITA  KAUSHIK",
       "match_type": "opposite_gender_random"
     },
     "2025A3PS0479P": {
@@ -2231,8 +2231,8 @@
     "2025A8PS0751P": {
       "id": "2025A8PS0751P",
       "name": "NIRBHAY SHAVINDER MATHARU",
-      "match_id": "2025A8PS0757P",
-      "match_name": "KUSHAGRA  SRIVASTAV",
+      "match_id": "2025B3TS1702P",
+      "match_name": "IRA SINGH CHOUDHARY",
       "match_type": "opposite_gender_random"
     },
     "2025A8PS0757P": {
@@ -2322,8 +2322,8 @@
     "2025A1PS1438P": {
       "id": "2025A1PS1438P",
       "name": "VONISHA MANWANI",
-      "match_id": "2025A3PS0048P",
-      "match_name": "SACHINKALYAN INDRAGANTI",
+      "match_id": "2025A1PS1472P",
+      "match_name": "DEV KUMAR",
       "match_type": "opposite_gender_random"
     },
     "2025B1PS0885P": {
@@ -3309,15 +3309,15 @@
     "2025B3TS1702P": {
       "id": "2025B3TS1702P",
       "name": "IRA SINGH CHOUDHARY",
-      "match_id": "2025A5PS1506P",
-      "match_name": "ISHITA  KAUSHIK",
+      "match_id": "2025A8PS0751P",
+      "match_name": "NIRBHAY SHAVINDER MATHARU",
       "match_type": "opposite_gender_random"
     },
     "2025A5PS1506P": {
       "id": "2025A5PS1506P",
       "name": "ISHITA  KAUSHIK",
-      "match_id": "2025B3TS1702P",
-      "match_name": "IRA SINGH CHOUDHARY",
+      "match_id": "2025A1PS0423P",
+      "match_name": "SHORYA  KUDESIA",
       "match_type": "opposite_gender_random"
     },
     "2025A8PS0756P": {
@@ -4926,8 +4926,8 @@
     "2025B1PS1268P": {
       "id": "2025B1PS1268P",
       "name": "CHITRANSHI SAO",
-      "match_id": "2025A7CS0140P",
-      "match_name": "AADIT  PATRA",
+      "match_id": "2025B1PS0901P",
+      "match_name": "CHITRANSH  SINHA",
       "match_type": "opposite_gender_random"
     },
     "2025A4PS0547P": {
@@ -6048,8 +6048,8 @@
     "2025B1PS0872P": {
       "id": "2025B1PS0872P",
       "name": "sorry bro you are sigma ANSHUL  MITTAL",
-      "match_id": "",
-      "match_name": "",
+      "match_id": "2025B1PS0914P",
+      "match_name": "KANISHKA VIJAY KHUBCHANDANI",
       "match_type": "unmatched_male"
     },
     "2025B3PS0997P": {
@@ -6573,8 +6573,8 @@
     "2025ABPS0808P": {
       "id": "2025ABPS0808P",
       "name": "sorry bro you are sigma KARTIK  BHADA",
-      "match_id": "",
-      "match_name": "",
+      "match_id": "2025B7PS1200P",
+      "match_name": "ARADHYA  KAUSHIK",
       "match_type": "unmatched_male"
     },
     "2025A8PS1309P": {
@@ -7294,8 +7294,8 @@
     "2025B7PS1203P": {
       "id": "2025B7PS1203P",
       "name": "sorry bro you are sigma ANNANT  TRIPATHY",
-      "match_id": "",
-      "match_name": "",
+      "match_id": "2025A1PS0425P",
+      "match_name": "SHREEJA  BOTHRA",
       "match_type": "unmatched_male"
     },
     "2025A4PS1429P": {
