@@ -7,6 +7,8 @@ const yourName = document.getElementById('yourName');
 const yourId = document.getElementById('yourId');
 const matchName = document.getElementById('matchName');
 const matchId = document.getElementById('matchId');
+const messageBox = document.getElementById('messageBox');
+const messageText = document.getElementById('messageText');
 const submitPaymentBtn = document.getElementById('submitPaymentBtn');
 const paymentStatus = document.getElementById('paymentStatus');
 const payerNameInput = document.getElementById('payerNameInput');
@@ -109,6 +111,17 @@ function showResult(entry) {
   } else {
     matchName.textContent = entry.match_name || '-';
     matchId.textContent = entry.match_id || '-';
+  }
+
+  if (!entry.match_id) {
+    messageText.textContent = 'you maaah sigma lil bro';
+    messageBox.classList.remove('hidden');
+  } else if (entry.message) {
+    messageText.textContent = entry.message;
+    messageBox.classList.remove('hidden');
+  } else {
+    messageText.textContent = '';
+    messageBox.classList.add('hidden');
   }
 
   valentineMessage.textContent = pick(sweetIdeas);
