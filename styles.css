@@ -353,6 +353,21 @@ button:active { transform: translateY(1px); }
   border-bottom: 1px dashed rgba(255, 122, 162, 0.25);
 }
 
+.message-box {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 14px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.9), rgba(255, 225, 234, 0.75));
+  border: 1px solid rgba(255, 122, 162, 0.45);
+  color: var(--ink);
+}
+
+.message-text {
+  margin-top: 6px;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
 .result .line {
   display: flex;
   align-items: center;
@@ -592,3 +607,19 @@ button:active { transform: translateY(1px); }
 .share-flowers span:nth-child(6) { animation-delay: 1.5s; }
 .share-flowers span:nth-child(7) { animation-delay: 1.8s; }
 .share-flowers span:nth-child(8) { animation-delay: 2.1s; }
+
+.disclaimer {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 122, 162, 0.45);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.disclaimer-title {
+  font-weight: 800;
+  margin-bottom: 6px;
+}

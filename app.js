@@ -23,6 +23,7 @@ let pollTimer = null;
 const startScreen = document.getElementById('startScreen');
 const enterBtn = document.getElementById('enterBtn');
 const mainContent = document.getElementById('mainContent');
+const disclaimerBox = document.getElementById('disclaimerBox');
 
 const sweetIdeas = [
   'Give this person a treat and a tiny handwritten note.',
@@ -66,6 +67,7 @@ function showError(msg) {
   result.classList.add('hidden');
   valentineBox.classList.add('hidden');
   sharePrompt.classList.add('hidden');
+  disclaimerBox.classList.add('hidden');
   setPaymentStatus('');
   setWaitingNote(false);
 }
@@ -101,6 +103,7 @@ function showResult(entry) {
   result.classList.remove('hidden');
   valentineBox.classList.remove('hidden');
   sharePrompt.classList.remove('hidden');
+  disclaimerBox.classList.remove('hidden');
 
   yourName.textContent = entry.name || '-';
   yourId.textContent = entry.id || '-';
