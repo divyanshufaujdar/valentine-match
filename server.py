@@ -29,6 +29,9 @@ def normalize_id(value):
 
 
 MATCHES = read_json(MATCHES_FILE, {}).get('entries', {})
+BLOCKED_IDS = {
+    "2025A5PS1503P",
+}
 
 
 def load_payments():
@@ -133,6 +136,8 @@ class Handler(SimpleHTTPRequestHandler):
             payer_name = str(body.get('name') or '').strip()
             if not id_value:
                 return self._send_json(400, {"error": "ID is required."})
+            if id_value in BLOCKED_IDS:
+                return self._send_json(403, {"error": "This ID is not allowed to access the site."})
             if not payer_name:
                 return self._send_json(400, {"error": "Name is required."})
             if id_value not in MATCHES:
@@ -169,6 +174,8 @@ class Handler(SimpleHTTPRequestHandler):
             id_value = normalize_id(body.get('id'))
             if not id_value:
                 return self._send_json(400, {"error": "ID is required."})
+            if id_value in BLOCKED_IDS:
+                return self._send_json(403, {"error": "This ID is not allowed to access the site."})
 
             payments = load_payments()
             record = normalize_record(payments['records'].get(id_value))
