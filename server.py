@@ -7,6 +7,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Use Azure App Service persistent storage if available
 PERSIST_DIR = '/home' if os.path.isdir('/home') else BASE_DIR
 DATA_FILE = os.environ.get('PAYMENTS_PATH', os.path.join(PERSIST_DIR, 'payments.json'))
+CHAT_FILE = os.environ.get('CHAT_PATH', os.path.join(PERSIST_DIR, 'general_chat.json'))
+MATCH_MSG_FILE = os.environ.get('MATCH_MESSAGES_PATH', os.path.join(PERSIST_DIR, 'match_messages.json'))
 MATCHES_FILE = os.path.join(BASE_DIR, 'matches.json')
 PORT = int(os.environ.get('PORT', '8000'))
 
@@ -79,6 +81,29 @@ def compute_status(record):
     return "none"
 
 
+def load_chat():
+    return read_json(CHAT_FILE, {"messages": []})
+
+
+def save_chat(data):
+    write_json(CHAT_FILE, data)
+
+
+def load_match_messages():
+    return read_json(MATCH_MSG_FILE, {"threads": {}})
+
+
+def save_match_messages(data):
+    write_json(MATCH_MSG_FILE, data)
+
+
+def can_access_chat(record):
+    if not record:
+        return False
+    record = normalize_record(record)
+    return record.get('credits', 0) > 0 or record.get('used_count', 0) > 0
+
+
 class Handler(SimpleHTTPRequestHandler):
     def _send_json(self, status, payload):
         data = json.dumps(payload).encode('utf-8')
@@ -110,6 +135,42 @@ class Handler(SimpleHTTPRequestHandler):
             status = compute_status(record)
             return self._send_json(200, {"status": status, "record": record})
 
+        if parsed.path == '/api/chat':
+            query = parse_qs(parsed.query)
+            id_value = normalize_id(query.get('id', [''])[0])
+            if not id_value:
+                return self._send_json(400, {"error": "ID is required."})
+            payments = load_payments()
+            record = payments['records'].get(id_value)
+            if not can_access_chat(record):
+                return self._send_json(403, {"error": "Access denied."})
+            data = load_chat()
+            # anonymize to users
+            public = [
+                {
+                    "id": m.get("id"),
+                    "text": m.get("text"),
+                    "ts": m.get("ts"),
+                    "pinned": m.get("pinned", False),
+                }
+                for m in data.get("messages", [])
+            ]
+            return self._send_json(200, {"messages": public})
+
+        if parsed.path == '/api/messages':
+            query = parse_qs(parsed.query)
+            id_value = normalize_id(query.get('id', [''])[0])
+            if not id_value:
+                return self._send_json(400, {"error": "ID is required."})
+            if id_value not in MATCHES:
+                return self._send_json(404, {"error": "ID not found in matches."})
+            match_id = MATCHES[id_value].get("match_id")
+            if not match_id:
+                return self._send_json(200, {"messages": []})
+            key = "|".join(sorted([id_value, match_id]))
+            data = load_match_messages()
+            return self._send_json(200, {"messages": data.get("threads", {}).get(key, [])})
+
         if parsed.path == '/api/admin/pending':
             payments = load_payments()
             pending = []
@@ -118,6 +179,14 @@ class Handler(SimpleHTTPRequestHandler):
                 if rec and rec.get('pending_count', 0) > 0:
                     pending.append(rec)
             return self._send_json(200, {"pending": pending})
+
+        if parsed.path == '/api/admin/chat':
+            data = load_chat()
+            return self._send_json(200, {"messages": data.get("messages", [])})
+
+        if parsed.path == '/api/admin/messages':
+            data = load_match_messages()
+            return self._send_json(200, {"threads": data.get("threads", {})})
 
         if parsed.path == '/rose':
             self.path = '/rose.html'
@@ -200,6 +269,71 @@ class Handler(SimpleHTTPRequestHandler):
                 "credits_left": record['credits'],
                 "used_count": record['used_count']
             })
+
+        if parsed.path == '/api/chat':
+            id_value = normalize_id(body.get('id'))
+            name = str(body.get('name') or '').strip()
+            text = str(body.get('text') or '').strip()
+            if not id_value or not text:
+                return self._send_json(400, {"error": "ID and text are required."})
+            payments = load_payments()
+            record = payments['records'].get(id_value)
+            if not can_access_chat(record):
+                return self._send_json(403, {"error": "Access denied."})
+            data = load_chat()
+            msg_id = f"c_{__import__('time').time_ns()}"
+            data.setdefault("messages", []).append({
+                "id": msg_id,
+                "text": text,
+                "ts": __import__('datetime').datetime.utcnow().isoformat() + 'Z',
+                "from_id": id_value,
+                "from_name": name or "",
+                "pinned": False,
+            })
+            save_chat(data)
+            return self._send_json(200, {"status": "ok"})
+
+        if parsed.path == '/api/messages':
+            id_value = normalize_id(body.get('id'))
+            text = str(body.get('text') or '').strip()
+            if not id_value or not text:
+                return self._send_json(400, {"error": "ID and text are required."})
+            if id_value not in MATCHES:
+                return self._send_json(404, {"error": "ID not found in matches."})
+            match_id = MATCHES[id_value].get("match_id")
+            if not match_id:
+                return self._send_json(400, {"error": "No match assigned."})
+            key = "|".join(sorted([id_value, match_id]))
+            data = load_match_messages()
+            thread = data.setdefault("threads", {}).setdefault(key, [])
+            thread.append({
+                "from_id": id_value,
+                "to_id": match_id,
+                "text": text,
+                "ts": __import__('datetime').datetime.utcnow().isoformat() + 'Z'
+            })
+            save_match_messages(data)
+            return self._send_json(200, {"status": "ok"})
+
+        if parsed.path == '/api/admin/chat/pin':
+            msg_id = str(body.get('id') or '').strip()
+            if not msg_id:
+                return self._send_json(400, {"error": "Message id required."})
+            data = load_chat()
+            for m in data.get("messages", []):
+                if m.get("id") == msg_id:
+                    m["pinned"] = True
+                    save_chat(data)
+                    return self._send_json(200, {"status": "pinned"})
+            return self._send_json(404, {"error": "Message not found."})
+
+        if parsed.path == '/api/admin/chat/delete':
+            msg_id = str(body.get('id') or '').strip()
+            data = load_chat()
+            msgs = data.get("messages", [])
+            data["messages"] = [m for m in msgs if m.get("id") != msg_id]
+            save_chat(data)
+            return self._send_json(200, {"status": "deleted"})
 
         if parsed.path == '/api/admin/approve':
             id_value = normalize_id(body.get('id'))

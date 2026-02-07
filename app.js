@@ -24,6 +24,16 @@ const startScreen = document.getElementById('startScreen');
 const enterBtn = document.getElementById('enterBtn');
 const mainContent = document.getElementById('mainContent');
 const disclaimerBox = document.getElementById('disclaimerBox');
+const matchChat = document.getElementById('matchChat');
+const generalChat = document.getElementById('generalChat');
+const matchThread = document.getElementById('matchThread');
+const generalThread = document.getElementById('generalThread');
+const matchMessageInput = document.getElementById('matchMessageInput');
+const generalMessageInput = document.getElementById('generalMessageInput');
+const sendMatchBtn = document.getElementById('sendMatchBtn');
+const sendGeneralBtn = document.getElementById('sendGeneralBtn');
+
+let currentId = '';
 
 const sweetIdeas = [
   'Give this person a treat and a tiny handwritten note.',
@@ -68,6 +78,8 @@ function showError(msg) {
   valentineBox.classList.add('hidden');
   sharePrompt.classList.add('hidden');
   disclaimerBox.classList.add('hidden');
+  matchChat.classList.add('hidden');
+  generalChat.classList.add('hidden');
   setPaymentStatus('');
   setWaitingNote(false);
 }
@@ -104,6 +116,8 @@ function showResult(entry) {
   valentineBox.classList.remove('hidden');
   sharePrompt.classList.remove('hidden');
   disclaimerBox.classList.remove('hidden');
+  matchChat.classList.remove('hidden');
+  generalChat.classList.remove('hidden');
 
   yourName.textContent = entry.name || '-';
   yourId.textContent = entry.id || '-';
@@ -128,6 +142,83 @@ function showResult(entry) {
   }
 
   valentineMessage.textContent = pick(sweetIdeas);
+
+  if (currentId) {
+    loadMatchThread(currentId);
+    loadGeneralChat(currentId);
+  }
+}
+
+function renderMatchThread(messages) {
+  matchThread.innerHTML = '';
+  if (!messages || messages.length === 0) {
+    matchThread.innerHTML = '<div class="chat-item">No messages yet.</div>';
+    return;
+  }
+  messages.forEach(m => {
+    const who = m.from_id === currentId ? 'You' : 'Your match';
+    const item = document.createElement('div');
+    item.className = 'chat-item';
+    item.innerHTML = `<div><strong>${who}:</strong> ${m.text}</div><div class="chat-meta">${m.ts || ''}</div>`;
+    matchThread.appendChild(item);
+  });
+}
+
+function renderGeneralChat(messages) {
+  generalThread.innerHTML = '';
+  if (!messages || messages.length === 0) {
+    generalThread.innerHTML = '<div class="chat-item">No messages yet.</div>';
+    return;
+  }
+  const pinned = messages.filter(m => m.pinned);
+  const rest = messages.filter(m => !m.pinned);
+  const ordered = [...pinned, ...rest];
+  ordered.forEach(m => {
+    const item = document.createElement('div');
+    item.className = 'chat-item';
+    const pin = m.pinned ? '<span class="pin">📌</span>' : '';
+    item.innerHTML = `<div>${pin}<strong>Anonymous:</strong> ${m.text}</div><div class="chat-meta">${m.ts || ''}</div>`;
+    generalThread.appendChild(item);
+  });
+}
+
+async function loadMatchThread(id) {
+  const res = await fetch(`/api/messages?id=${encodeURIComponent(id)}`);
+  const data = await res.json();
+  if (!res.ok) return;
+  renderMatchThread(data.messages || []);
+}
+
+async function loadGeneralChat(id) {
+  const res = await fetch(`/api/chat?id=${encodeURIComponent(id)}`);
+  const data = await res.json();
+  if (!res.ok) return;
+  renderGeneralChat(data.messages || []);
+}
+
+async function sendMatchMessage() {
+  const text = matchMessageInput.value.trim();
+  if (!currentId || !text) return;
+  await fetch('/api/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: currentId, text })
+  });
+  matchMessageInput.value = '';
+  loadMatchThread(currentId);
+}
+
+async function sendGeneralMessage() {
+  const text = generalMessageInput.value.trim();
+  if (!currentId || !text) return;
+  const name = payerNameInput.value.trim();
+  await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: currentId, name, text })
+  });
+  generalMessageInput.value = '';
+  loadGeneralChat(currentId);
 }
 
 async function submitPayment() {
@@ -183,6 +274,7 @@ async function lookup(auto = false) {
   }
 
   const id = normalizeId(raw);
+  currentId = id;
 
   try {
     const res = await fetch('/api/lookup', {
@@ -231,6 +323,9 @@ enterBtn.addEventListener('click', () => {
   startScreen.style.display = 'none';
   mainContent.style.display = 'block';
 });
+
+sendMatchBtn.addEventListener('click', sendMatchMessage);
+sendGeneralBtn.addEventListener('click', sendGeneralMessage);
 
 mainContent.addEventListener('mousemove', (e) => {
   if (Math.random() > 0.12) return;

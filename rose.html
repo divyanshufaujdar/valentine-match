@@ -19,6 +19,16 @@
 
       <div id="pendingList" class="result"></div>
       <div id="adminError" class="error hidden"></div>
+
+      <div class="result">
+        <div class="result-header">General Chat (Admin View)</div>
+        <div id="adminChatList"></div>
+      </div>
+
+      <div class="result">
+        <div class="result-header">Match Messages (Admin View)</div>
+        <div id="adminMatchMessages"></div>
+      </div>
     </section>
   </main>
 
@@ -56,7 +66,60 @@
       });
     }
 
+    async function loadAdminChat() {
+      const res = await fetch('/api/admin/chat');
+      const data = await res.json();
+      const container = document.getElementById('adminChatList');
+      container.innerHTML = '';
+      (data.messages || []).forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'line';
+        row.innerHTML = `
+          <span class="label">${item.from_id || ''}</span>
+          <span class="value">${item.text || ''}</span>
+          <button class="soft" data-id="${item.id}" data-action="pin">Pin</button>
+          <button class="soft" data-id="${item.id}" data-action="delete">Delete</button>
+        `;
+        container.appendChild(row);
+      });
+
+      container.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const action = btn.dataset.action;
+          const endpoint = action === 'pin' ? '/api/admin/chat/pin' : '/api/admin/chat/delete';
+          await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: btn.dataset.id })
+          });
+          loadAdminChat();
+        });
+      });
+    }
+
+    async function loadAdminMatchMessages() {
+      const res = await fetch('/api/admin/messages');
+      const data = await res.json();
+      const container = document.getElementById('adminMatchMessages');
+      container.innerHTML = '';
+      const threads = data.threads || {};
+      Object.keys(threads).forEach(key => {
+        const header = document.createElement('div');
+        header.className = 'line';
+        header.innerHTML = `<span class="label">${key}</span><span class="value">${threads[key].length} messages</span>`;
+        container.appendChild(header);
+        threads[key].forEach(msg => {
+          const row = document.createElement('div');
+          row.className = 'line';
+          row.innerHTML = `<span class="label">${msg.from_id} → ${msg.to_id}</span><span class="value">${msg.text}</span>`;
+          container.appendChild(row);
+        });
+      });
+    }
+
     loadPending();
+    loadAdminChat();
+    loadAdminMatchMessages();
   </script>
 </body>
 </html>
