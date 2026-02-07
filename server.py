@@ -250,16 +250,17 @@ class Handler(SimpleHTTPRequestHandler):
             record = normalize_record(payments['records'].get(id_value))
             if not record:
                 return self._send_json(403, {"error": "Payment not submitted."})
-            if record.get('pending_count', 0) > 0 and record.get('credits', 0) <= 0:
+            if record.get('pending_count', 0) > 0 and record.get('credits', 0) <= 0 and record.get('used_count', 0) <= 0:
                 return self._send_json(403, {"error": "Payment pending approval."})
-            if record.get('credits', 0) <= 0:
+            if record.get('credits', 0) <= 0 and record.get('used_count', 0) <= 0:
                 return self._send_json(403, {"error": "No approved payment credit available."})
 
             entry = MATCHES.get(id_value)
             if not entry:
                 return self._send_json(404, {"error": "ID not found in matches."})
 
-            record['credits'] = record.get('credits', 0) - 1
+            if record.get('credits', 0) > 0:
+                record['credits'] = record.get('credits', 0) - 1
             record['used_count'] = record.get('used_count', 0) + 1
             record['lastUsedAt'] = __import__('datetime').datetime.utcnow().isoformat() + 'Z'
             payments['records'][id_value] = record
