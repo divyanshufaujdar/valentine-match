@@ -74,9 +74,13 @@
       (data.messages || []).forEach(item => {
         const row = document.createElement('div');
         row.className = 'line';
+        const attachment = item.file_url
+          ? `<a class="value" href="${item.file_url}" target="_blank" rel="noreferrer">Attachment</a>`
+          : '';
         row.innerHTML = `
           <span class="label">${item.from_id || ''}</span>
           <span class="value">${item.text || ''}</span>
+          ${attachment}
           <button class="soft" data-id="${item.id}" data-action="pin">Pin</button>
           <button class="soft" data-id="${item.id}" data-action="delete">Delete</button>
         `;

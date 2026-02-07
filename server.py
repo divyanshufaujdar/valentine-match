@@ -1,3 +1,4 @@
+import cgi
 import json
 import os
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -11,6 +12,22 @@ CHAT_FILE = os.environ.get('CHAT_PATH', os.path.join(PERSIST_DIR, 'general_chat.
 MATCH_MSG_FILE = os.environ.get('MATCH_MESSAGES_PATH', os.path.join(PERSIST_DIR, 'match_messages.json'))
 MATCHES_FILE = os.path.join(BASE_DIR, 'matches.json')
 PORT = int(os.environ.get('PORT', '8000'))
+UPLOAD_DIR = os.path.join(BASE_DIR, 'uploads')
+MAX_UPLOAD_BYTES = 8 * 1024 * 1024
+ALLOWED_MIME_TYPES = {
+    "image/jpeg": ".jpg",
+    "image/png": ".png",
+    "image/gif": ".gif",
+    "image/webp": ".webp",
+    "audio/mpeg": ".mp3",
+    "audio/mp3": ".mp3",
+    "audio/wav": ".wav",
+    "audio/x-wav": ".wav",
+    "audio/ogg": ".ogg",
+    "audio/webm": ".webm",
+    "audio/mp4": ".m4a",
+    "audio/x-m4a": ".m4a",
+}
 
 
 def read_json(path, fallback):
@@ -104,6 +121,41 @@ def can_access_chat(record):
     return record.get('credits', 0) > 0 or record.get('used_count', 0) > 0
 
 
+def save_upload(file_item, msg_id):
+    if not file_item or not getattr(file_item, 'filename', None):
+        return None, None
+    content_type = str(getattr(file_item, 'type', '') or '').lower()
+    ext = ALLOWED_MIME_TYPES.get(content_type)
+    if not ext:
+        return None, "Unsupported file type."
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+    filename = f"{msg_id}{ext}"
+    path = os.path.join(UPLOAD_DIR, filename)
+    size = 0
+    try:
+        with open(path, 'wb') as f:
+            while True:
+                chunk = file_item.file.read(8192)
+                if not chunk:
+                    break
+                size += len(chunk)
+                if size > MAX_UPLOAD_BYTES:
+                    f.close()
+                    try:
+                        os.remove(path)
+                    except OSError:
+                        pass
+                    return None, f"File too large. Max {MAX_UPLOAD_BYTES // (1024 * 1024)}MB."
+                f.write(chunk)
+    except Exception:
+        try:
+            os.remove(path)
+        except OSError:
+            pass
+        return None, "Failed to save upload."
+    return {"url": f"/uploads/{filename}", "type": content_type}, None
+
+
 class Handler(SimpleHTTPRequestHandler):
     def _send_json(self, status, payload):
         data = json.dumps(payload).encode('utf-8')
@@ -122,6 +174,20 @@ class Handler(SimpleHTTPRequestHandler):
             return json.loads(raw)
         except Exception:
             return None
+
+    def _read_multipart(self):
+        content_type = self.headers.get('Content-Type', '')
+        if 'multipart/form-data' not in content_type:
+            return None
+        return cgi.FieldStorage(
+            fp=self.rfile,
+            headers=self.headers,
+            environ={
+                'REQUEST_METHOD': 'POST',
+                'CONTENT_TYPE': content_type,
+            },
+            keep_blank_values=True,
+        )
 
     def do_GET(self):
         parsed = urlparse(self.path)
@@ -150,8 +216,9 @@ class Handler(SimpleHTTPRequestHandler):
                 {
                     "id": m.get("id"),
                     "text": m.get("text"),
-                    "ts": m.get("ts"),
                     "pinned": m.get("pinned", False),
+                    "file_url": m.get("file_url"),
+                    "file_type": m.get("file_type"),
                 }
                 for m in data.get("messages", [])
             ]
@@ -196,6 +263,42 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urlparse(self.path)
+        if parsed.path == '/api/chat' and 'multipart/form-data' in self.headers.get('Content-Type', ''):
+            form = self._read_multipart()
+            if form is None:
+                return self._send_json(400, {"error": "Invalid form data."})
+            id_value = normalize_id(form.getfirst('id', ''))
+            name = str(form.getfirst('name', '') or '').strip()
+            text = str(form.getfirst('text', '') or '').strip()
+            file_item = form['file'] if 'file' in form else None
+            if isinstance(file_item, list):
+                file_item = file_item[0]
+            if not id_value or (not text and not (file_item and getattr(file_item, 'filename', None))):
+                return self._send_json(400, {"error": "ID and a message or file are required."})
+            payments = load_payments()
+            record = payments['records'].get(id_value)
+            if not can_access_chat(record):
+                return self._send_json(403, {"error": "Access denied."})
+            data = load_chat()
+            msg_id = f"c_{__import__('time').time_ns()}"
+            upload, upload_error = save_upload(file_item, msg_id)
+            if upload_error:
+                return self._send_json(400, {"error": upload_error})
+            message = {
+                "id": msg_id,
+                "text": text,
+                "ts": __import__('datetime').datetime.utcnow().isoformat() + 'Z',
+                "from_id": id_value,
+                "from_name": name or "",
+                "pinned": False,
+            }
+            if upload:
+                message["file_url"] = upload["url"]
+                message["file_type"] = upload["type"]
+            data.setdefault("messages", []).append(message)
+            save_chat(data)
+            return self._send_json(200, {"status": "ok"})
+
         body = self._read_body()
         if body is None:
             return self._send_json(400, {"error": "Invalid JSON."})

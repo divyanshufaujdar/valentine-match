@@ -31,6 +31,7 @@ const matchThread = document.getElementById('matchThread');
 const generalThread = document.getElementById('generalThread');
 const matchMessageInput = document.getElementById('matchMessageInput');
 const generalMessageInput = document.getElementById('generalMessageInput');
+const generalMediaInput = document.getElementById('generalMediaInput');
 const sendMatchBtn = document.getElementById('sendMatchBtn');
 const sendGeneralBtn = document.getElementById('sendGeneralBtn');
 
@@ -202,8 +203,48 @@ function renderGeneralChat(messages) {
   ordered.forEach(m => {
     const item = document.createElement('div');
     item.className = 'chat-item';
-    const pin = m.pinned ? '<span class="pin">📌</span>' : '';
-    item.innerHTML = `<div>${pin}<strong>Anonymous:</strong> ${m.text}</div><div class="chat-meta">${m.ts || ''}</div>`;
+    const title = document.createElement('div');
+    if (m.pinned) {
+      const pin = document.createElement('span');
+      pin.className = 'pin';
+      pin.textContent = '📌';
+      title.appendChild(pin);
+    }
+    const name = document.createElement('strong');
+    name.textContent = 'anonymous';
+    title.appendChild(name);
+    item.appendChild(title);
+
+    if (m.text) {
+      const text = document.createElement('div');
+      text.className = 'chat-text';
+      text.textContent = m.text;
+      item.appendChild(text);
+    }
+
+    if (m.file_url) {
+      const mediaWrap = document.createElement('div');
+      mediaWrap.className = 'chat-media';
+      if (m.file_type && m.file_type.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = m.file_url;
+        img.alt = 'Shared image';
+        mediaWrap.appendChild(img);
+      } else if (m.file_type && m.file_type.startsWith('audio/')) {
+        const audio = document.createElement('audio');
+        audio.controls = true;
+        audio.src = m.file_url;
+        mediaWrap.appendChild(audio);
+      } else {
+        const link = document.createElement('a');
+        link.href = m.file_url;
+        link.textContent = 'View attachment';
+        link.target = '_blank';
+        link.rel = 'noreferrer';
+        mediaWrap.appendChild(link);
+      }
+      item.appendChild(mediaWrap);
+    }
     generalThread.appendChild(item);
   });
 }
@@ -236,14 +277,20 @@ async function sendMatchMessage() {
 
 async function sendGeneralMessage() {
   const text = generalMessageInput.value.trim();
-  if (!currentId || !text) return;
+  const file = generalMediaInput.files[0];
+  if (!currentId || (!text && !file)) return;
   const name = payerNameInput.value.trim();
+  const formData = new FormData();
+  formData.append('id', currentId);
+  formData.append('name', name);
+  if (text) formData.append('text', text);
+  if (file) formData.append('file', file);
   await fetch('/api/chat', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id: currentId, name, text })
+    body: formData
   });
   generalMessageInput.value = '';
+  generalMediaInput.value = '';
   loadGeneralChat(currentId);
 }
 

@@ -217,6 +217,15 @@ input:focus {
   transform: translateY(-1px);
 }
 
+input[type="file"] {
+  padding: 10px;
+  font-size: 13px;
+}
+
+.file-input {
+  flex: 0 0 180px;
+}
+
 button {
   background: linear-gradient(135deg, #ff2e6d 0%, #ff7aa2 100%);
   color: #2a0912;
@@ -390,6 +399,24 @@ button:active { transform: translateY(1px); }
 .chat-meta {
   font-size: 11px;
   color: rgba(58, 11, 20, 0.6);
+}
+
+.chat-text {
+  margin-top: 4px;
+}
+
+.chat-media {
+  margin-top: 8px;
+}
+
+.chat-media img {
+  max-width: 100%;
+  border-radius: 10px;
+  display: block;
+}
+
+.chat-media audio {
+  width: 100%;
 }
 
 .pin {
