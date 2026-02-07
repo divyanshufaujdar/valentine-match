@@ -100,7 +100,7 @@ function startChatPolling() {
       loadMatchThread(currentId);
       loadGeneralChat(currentId);
     }
-  }, 5000);
+  }, 2000);
 }
 
 function stopChatPolling() {
