@@ -20,6 +20,7 @@ const sweetBtn = document.getElementById('sweetBtn');
 const jokeBtn = document.getElementById('jokeBtn');
 const sharePrompt = document.getElementById('sharePrompt');
 let pollTimer = null;
+let chatTimer = null;
 const startScreen = document.getElementById('startScreen');
 const enterBtn = document.getElementById('enterBtn');
 const mainContent = document.getElementById('mainContent');
@@ -82,12 +83,30 @@ function showError(msg) {
   generalChat.classList.add('hidden');
   setPaymentStatus('');
   setWaitingNote(false);
+  stopChatPolling();
 }
 
 function stopPolling() {
   if (pollTimer) {
     clearInterval(pollTimer);
     pollTimer = null;
+  }
+}
+
+function startChatPolling() {
+  if (chatTimer) return;
+  chatTimer = setInterval(() => {
+    if (currentId) {
+      loadMatchThread(currentId);
+      loadGeneralChat(currentId);
+    }
+  }, 5000);
+}
+
+function stopChatPolling() {
+  if (chatTimer) {
+    clearInterval(chatTimer);
+    chatTimer = null;
   }
 }
 
@@ -146,6 +165,7 @@ function showResult(entry) {
   if (currentId) {
     loadMatchThread(currentId);
     loadGeneralChat(currentId);
+    startChatPolling();
   }
 }
 
@@ -173,6 +193,12 @@ function renderGeneralChat(messages) {
   const pinned = messages.filter(m => m.pinned);
   const rest = messages.filter(m => !m.pinned);
   const ordered = [...pinned, ...rest];
+  if (pinned.length > 0) {
+    const header = document.createElement('div');
+    header.className = 'chat-item';
+    header.innerHTML = '<strong>📌 Pinned</strong>';
+    generalThread.appendChild(header);
+  }
   ordered.forEach(m => {
     const item = document.createElement('div');
     item.className = 'chat-item';
@@ -299,6 +325,7 @@ async function lookup(auto = false) {
     }
     setWaitingNote(false);
     stopPolling();
+    startChatPolling();
   } catch (err) {
     if (!auto) showError('Something went wrong loading the data.');
   }
